@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Equipment Purchase Request — GITAM VDC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue: #007367;
+  --blue-mid: #0b7f73;
+  --blue-light: #e3f3f1;
+  --blue-accent: #1e9a8a;
+  --red: #c0392b;
+  --green: #1a7a4a;
+  --green-light: #e6f5ec;
+  --amber: #92600a;
+  --amber-light: #fdf3e0;
+  --surface: #ffffff;
+  --surface2: #f7f8fa;
+  --surface3: #eef0f4;
+  --border: #d5dae4;
+  --border-light: #e8eaf0;
+  --text: #1a1f2e;
+  --text2: #4a5568;
+  --text3: #8a95a8;
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 14px; }
+body {
+  font-family: 'Inter', sans-serif;
+  /* background: #f0f2f7; */
+  color: var(--text);
+  min-height: 100vh;
+  padding: 20px 16px 36px;
+}
+
+/* ── TOP BANNER ── */
+.banner {
+  max-width: 860px;
+  margin: 0 auto 20px;
+  background: var(--blue);
+  border-radius: var(--radius-lg);
+  padding: 20px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.banner-logo {
+  width: 44px; height: 44px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px; flex-shrink: 0;
+}
+.banner-text { flex: 1; }
+.banner-org { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: rgba(255,255,255,.6); margin-bottom: 2px; }
+.banner-title { font-size: 17px; font-weight: 600; color: #fff; }
+.banner-ref { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,.75); margin-top: 3px; }
+
+/* ── CARD ── */
+.card {
+  max-width: 860px;
+  margin: 0 auto 16px;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+.card-header {
+  padding: 14px 24px 12px;
+  border-bottom: 1px solid var(--border-light);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-num {
+  width: 24px; height: 24px;
+  background: var(--blue);
+  color: #fff;
+  border-radius: 50%;
+  font-size: 11px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.card-header h2 { font-size: 13px; font-weight: 600; color: var(--blue); letter-spacing: .02em; }
+.card-body { padding: 18px 24px 20px; }
+
+/* ── FIELDS ── */
+.row { display: grid; gap: 12px; margin-bottom: 12px; }
+.row-2 { grid-template-columns: 1fr 1fr; }
+.row-3 { grid-template-columns: 1fr 1fr 1fr; }
+.row-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+.field label {
+  display: block;
+  font-size: 11.5px; font-weight: 500; color: var(--text2);
+  margin-bottom: 5px; letter-spacing: .01em;
+}
+.field label .req { color: var(--red); }
+.field input, .field select, .field textarea {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 11px;
+  outline: none;
+  transition: border-color .15s, background .15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--blue-accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59,130,212,.12);
+}
+.field input[readonly] { color: var(--text3); cursor: default; }
+.field textarea { resize: vertical; min-height: 70px; line-height: 1.55; }
+.field .hint { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* ── TOTALS BAR ── */
+.totals-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border-light);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.t-cell {
+  background: var(--surface2);
+  padding: 10px 14px;
+}
+.t-lbl { font-size: 10.5px; color: var(--text3); margin-bottom: 3px; letter-spacing: .03em; }
+.t-val { font-size: 15px; font-weight: 600; color: var(--text); font-family: 'DM Mono', monospace; }
+.t-val.grand { color: var(--blue); }
+
+/* ── EQUIPMENT TABLE ── */
+.eq-wrap { overflow-x: auto; margin-bottom: 12px; }
+table.eq {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 880px;
+}
+.eq thead th {
+  background: var(--blue);
+  color: rgba(255,255,255,.85);
+  padding: 8px 8px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .03em;
+  white-space: nowrap;
+}
+.eq thead th:first-child { border-radius: 0; }
+.eq tbody tr { border-bottom: 1px solid var(--border-light); }
+.eq tbody tr:nth-child(even) td { background: var(--surface2); }
+.eq tbody tr:hover td { background: var(--blue-light); }
+.eq td { padding: 5px 5px; vertical-align: middle; }
+.eq td input, .eq td select {
+  width: 100%;
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  padding: 5px 7px;
+  color: var(--text);
+  outline: none;
+  transition: border-color .12s, background .12s;
+}
+.eq td input:focus, .eq td select:focus {
+  border-color: var(--blue-accent);
+  background: #fff;
+}
+.eq td .category-custom {
+  margin-top: 4px;
+}
+.eq td .auto-cell {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--blue);
+  font-weight: 500;
+  padding: 5px 7px;
+  white-space: nowrap;
+}
+.eq td .rn { font-size: 11px; color: var(--text3); text-align: center; }
+.del-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text3); font-size: 16px; padding: 3px 5px;
+  border-radius: 5px; transition: color .15s, background .15s;
+}
+.del-btn:hover { color: var(--red); background: #fdf0ef; }
+.add-row-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--blue-mid);
+  background: var(--blue-light);
+  border: 1px dashed var(--blue-accent);
+  border-radius: var(--radius);
+  padding: 7px 14px; cursor: pointer;
+  transition: background .15s;
+}
+.add-row-btn:hover { background: #d5e4f6; }
+.equipment-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ── PRIORITY ── */
+.priority-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.p-opt input { display: none; }
+.p-opt label {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12.5px; font-weight: 500;
+  padding: 7px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  color: var(--text2);
+  transition: all .15s;
+}
+.p-opt input:checked + label.low  { background: var(--green-light); border-color: var(--green); color: var(--green); }
+.p-opt input:checked + label.med  { background: var(--amber-light); border-color: var(--amber); color: var(--amber); }
+.p-opt input:checked + label.high { background: #fdf0ef; border-color: var(--red); color: var(--red); }
+
+/* ── APPROVAL TABLE ── */
+.approval-tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.approval-tbl th {
+  background: var(--surface3);
+  padding: 8px 10px;
+  font-size: 11.5px; font-weight: 500; color: var(--text2);
+  border: 1px solid var(--border-light);
+  text-align: left;
+}
+.approval-tbl td { border: 1px solid var(--border-light); padding: 5px 8px; }
+.approval-tbl td input {
+  width: 100%; border: none; background: transparent;
+  font-family: 'Inter', sans-serif; font-size: 12.5px;
+  color: var(--text); outline: none;
+}
+
+/* ── DECLARATION ── */
+.decl {
+  background: var(--blue-light);
+  border-left: 3px solid var(--blue-mid);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 12px 16px;
+  font-size: 12.5px; color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.decl-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.decl-box {
+  background: var(--surface2);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius);
+  padding: 10px 12px;
+}
+.decl-label {
+  font-size: 10.5px;
+  color: var(--text3);
+  letter-spacing: .03em;
+  margin-bottom: 3px;
+}
+.decl-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+.decl-check {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.decl-check input { margin-top: 2px; flex-shrink: 0; }
+
+/* ── ACTION BAR ── */
+.action-bar {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px; font-weight: 500;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all .15s;
+}
+.btn-primary { background: var(--blue); color: #fff; }
+.btn-primary:hover { background: #163f70; }
+.btn-outline {
+  background: #fff;
+  color: var(--blue);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { background: var(--blue-light); border-color: var(--blue-accent); }
+.btn-green { background: var(--green); color: #fff; }
+.btn-green:hover { background: #145e38; }
+.btn:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+.btn:disabled:hover {
+  background: inherit;
+  border-color: inherit;
+}
+.req-note { margin-left: auto; font-size: 11.5px; color: var(--text3); }
+
+/* ── SUCCESS ── */
+.success {
+  display: none;
+  max-width: 860px;
+  margin: 16px auto 0;
+  background: var(--green-light);
+  border: 1px solid #aad4be;
+  border-radius: var(--radius);
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--green);
+  align-items: center;
+  gap: 10px;
+}
+.success svg { flex-shrink: 0; }
+
+@media print {
+  @page { size: A4 portrait; margin: 8mm; }
+  body { padding: 0; background: #fff; }
+  .banner, .card { max-width: 100%; box-shadow: none; }
+  .action-bar, .success, .add-row-btn, .btn-outline { display: none !important; }
+  .card { page-break-inside: avoid; break-inside: avoid; }
+  .eq-wrap { overflow: visible; }
+  table.eq { min-width: 0; width: 100%; font-size: 11px; table-layout: fixed; border-collapse: collapse; }
+  .eq th, .eq td {
+    background: #fff !important;
+    color: #000 !important;
+    border: 1px solid #000;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    vertical-align: top;
+    line-height: 1.3;
+    white-space: normal;
+  }
+  .eq thead th { font-size: 9px; padding: 4px 3px; text-align: left; }
+  .eq th:nth-child(1), .eq td:nth-child(1) { width: 4%; }
+  .eq th:nth-child(2), .eq td:nth-child(2) { width: 23%; }
+  .eq th:nth-child(3), .eq td:nth-child(3) { width: 14%; }
+  .eq th:nth-child(4), .eq td:nth-child(4) { width: 8%; }
+  .eq th:nth-child(5), .eq td:nth-child(5) { width: 16%; }
+  .eq th:nth-child(6), .eq td:nth-child(6) { width: 5%; }
+  .eq th:nth-child(7), .eq td:nth-child(7) { width: 11%; }
+  .eq th:nth-child(8), .eq td:nth-child(8) { width: 7%; }
+  .eq th:nth-child(9), .eq td:nth-child(9) { width: 12%; }
+  .eq td { padding: 4px 4px; }
+  .eq tbody tr:nth-child(even) td,
+  .eq tbody tr:hover td { background: #fff !important; }
+  .eq td input, .eq td select {
+    border: none;
+    background: transparent;
+    padding: 0;
+    font-size: 11px;
+  }
+  .eq .print-hide { display: none !important; }
+  .eq .print-val {
+    display: block;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .totals-bar { page-break-inside: avoid; break-inside: avoid; }
+}
+
+@media (max-width: 600px) {
+  .row-2, .row-3, .row-4 { grid-template-columns: 1fr; }
+  .decl-meta { grid-template-columns: 1fr; }
+  .totals-bar { grid-template-columns: 1fr 1fr; }
+  .banner { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="banner-logo"><img src="https://media.licdn.com/dms/image/v2/D560BAQEzPn443KHOew/company-logo_200_200/company-logo_200_200/0/1729839969977/gitam_deemed_university_logo?e=1779926400&v=beta&t=w4JuJ93mnH-UsmKCZ2w5zgp1qv0NsAk2Y4FIoU4k7nY" alt="" width="50"></div>
+  <div class="banner-text">
+    <div class="banner-org" id="orgDisp">Deaprtment Name · GITAM Deemed to be University</div>
+    <div class="banner-title">Equipment Purchase Request</div>
+    <div class="banner-ref" id="refDisp">Ref: —</div>
+  </div>
+</div>
+
+<!-- SECTION 1: Request Details -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">1</div>
+    <h2>Request Details</h2>
+  </div>
+  <div class="card-body">
+    <div class="row row-4">
+      <div class="field">
+        <label>Reference No. <span class="req">*</span></label>
+        <input type="text" id="refNo" required>
+      </div>
+      <div class="field">
+        <label>Date of Request <span class="req">*</span></label>
+        <input type="date" id="reqDate" readonly required>
+      </div>
+      <div class="field">
+        <label>Campus / Site <span class="req">*</span></label>
+        <select id="campus" required>
+          <option value="">Select campus</option>
+          <option value="Visakhapatnam">Visakhapatnam</option>
+          <option value="Hyderabad">Hyderabad</option>
+          <option value="Bengaluru">Bengaluru</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Academic Year <span class="req">*</span></label>
+        <select id="acYear" required>
+          <option value="">Select Academic Year</option>
+          <option value="2026-27">2026-27</option>
+          <option value="2027-28">2027-28</option>
+          <option value="2028-29">2028-29</option>
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 2: Requester -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">2</div>
+    <h2>Requester Information</h2>
+  </div>
+  <div class="card-body">
+    <div class="row row-3">
+      <div class="field">
+        <label>Full Name <span class="req">*</span></label>
+        <input type="text" id="fullName" placeholder="e.g. Ram Krishna" required>
+      </div>
+      <div class="field">
+        <label>Employee ID <span class="req">*</span></label>
+        <input type="text" placeholder="e.g. EMP-2041" required>
+      </div>
+      <div class="field">
+        <label>Designation / Role <span class="req">*</span></label>
+        <input type="text" placeholder="e.g. Manager" required>
+      </div>
+    </div>
+    <div class="row row-3">
+      <div class="field">
+        <label>Department <span class="req">*</span></label>
+        <input type="text" id="dept" placeholder="e.g. Department Name" required>
+      </div>
+      <div class="field">
+        <label>Contact Email <span class="req">*</span></label>
+        <input type="email" placeholder="name@gitam.edu" required>
+      </div>
+      <div class="field">
+        <label>Contact Phone <span class="req">*</span></label>
+        <input type="tel" placeholder="e.g. 9876543210" required>
+      </div>
+    </div>
+    <div class="row row-2">
+      <div class="field">
+        <label>Delivery Location / Site <span class="req">*</span></label>
+        <input type="text" id="delivLoc" placeholder="e.g. Building name, Campus - Pincode" required>
+      </div>
+      <div class="field">
+        <label>Required by Date <span class="req">*</span></label>
+        <input type="date" id="requiredBy" required>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 3: Equipment -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">3</div>
+    <h2>Equipment Details</h2>
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin-bottom:12px">
+      <div class="field">
+        <label>Vendor / Supplier <span class="req">*</span></label>
+        <input type="text" id="vendorName" placeholder="e.g. Authorized supplier name" required>
+      </div>
+    </div>
+    <div class="totals-bar">
+      <div class="t-cell">
+        <div class="t-lbl">ITEMS</div>
+        <div class="t-val" id="itemCount">0</div>
+      </div>
+      <div class="t-cell">
+        <div class="t-lbl">SUB-TOTAL (EXCL. GST)</div>
+        <div class="t-val" id="subTotal">₹0</div>
+      </div>
+      <div class="t-cell">
+        <div class="t-lbl">GST TOTAL</div>
+        <div class="t-val" id="gstAmt">₹0</div>
+      </div>
+      <div class="t-cell">
+        <div class="t-lbl">GRAND TOTAL (INCL. GST)</div>
+        <div class="t-val grand" id="grandTotal">₹0</div>
+      </div>
+    </div>
+    <div class="eq-wrap">
+      <table class="eq">
+        <thead>
+          <tr>
+            <th style="width:30px">#</th>
+            <th style="min-width:190px">Equipment Name *</th>
+            <th style="min-width:130px">Model / Spec</th>
+            <th style="min-width:85px">HSN / SAC</th>
+            <th style="min-width:160px">Category</th>
+            <th style="width:50px">Qty *</th>
+            <th style="min-width:105px">Unit Cost (₹) *</th>
+            <th style="min-width:85px">GST Slab</th>
+            <th style="min-width:105px">Total incl. GST</th>
+            <th style="width:32px" class="print-hide"></th>
+          </tr>
+        </thead>
+        <tbody id="eqBody"></tbody>
+      </table>
+    </div>
+    <div class="equipment-actions">
+      <button class="add-row-btn" onclick="addRow()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add equipment line
+      </button>
+      <button class="btn btn-outline" onclick="downloadSampleExcel()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 18 15 15"/></svg>
+        Sample Excel
+      </button>
+      <button class="btn btn-outline" onclick="document.getElementById('excelFile').click()">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Upload Excel
+      </button>
+      <input type="file" id="excelFile" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)">
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 4: Purpose -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">4</div>
+    <h2>Purpose &amp; Usage</h2>
+  </div>
+  <div class="card-body">
+    <div class="row" style="margin-bottom:12px">
+      <div class="field">
+        <label>Purpose of Purchase <span class="req">*</span></label>
+        <textarea id="purpose" placeholder="Why is this equipment needed? e.g. new Makerspace setup, replacement, capacity expansion aligned with campus roadmap…"></textarea>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:12px">
+      <div class="field">
+        <label>Intended Usage <span class="req">*</span></label>
+        <textarea id="usage" placeholder="How and where will this be used? Who will use it? Which tasks or processes will it support?"></textarea>
+      </div>
+    </div>
+    <div class="row row-2">
+      <div class="field">
+        <label>Expected Frequency of Use</label>
+        <select>
+          <option value="">Select…</option>
+          <option>Daily</option>
+          <option>Weekly</option>
+          <option>Monthly</option>
+          <option>Occasional</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Estimated Useful Life</label>
+        <input type="text" placeholder="e.g. 5 years">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 5: Budget -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">5</div>
+    <h2>Budget &amp; Priority</h2>
+  </div>
+  <div class="card-body">
+    <div class="row row-3" style="margin-bottom:12px">
+      <div class="field">
+        <label>Budget Code / Cost Centre <span class="req">*</span></label>
+        <input type="text" placeholder="e.g. CC-1042-OPS" required>
+      </div>
+      <div class="field">
+        <label>Funding Source <span class="req">*</span></label>
+        <select required>
+          <option value="">Select…</option>
+          <option value="GITAM">GITAM</option>
+          <option value="Reasearch Grant">Reasearch Grant</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>PO Type <span class="req">*</span></label>
+        <select required>
+          <option value="">Select…</option>
+          <option value="Academic">Academic</option>
+          <option value="Non-Academic">Non-Academic</option>
+        </select>
+      </div>
+    </div>
+    
+
+    <div class="field" style="margin-bottom:12px">
+      <label>Priority Level <span class="req">*</span></label>
+      <select required>
+          <option value="">Select…</option>
+          <option value="Low">Low</option>
+          <option value="Medium">Medium</option>
+          <option value="High">High</option>
+        </select>
+      <!-- <div class="priority-row">
+        <div class="p-opt"><input type="radio" name="priority" id="pLow" value="Low"><label for="pLow" class="low">▼ Low</label></div>
+        <div class="p-opt"><input type="radio" name="priority" id="pMed" value="Medium"><label for="pMed" class="med">▶ Medium</label></div>
+        <div class="p-opt"><input type="radio" name="priority" id="pHigh" value="High/Urgent" checked><label for="pHigh" class="high">▲ High / Urgent</label></div>
+      </div> -->
+    </div>
+    <div class="field">
+      <label>Additional Remarks</label>
+      <textarea placeholder="Quote expiry dates, advance payment terms, safety considerations, or any other relevant info…"></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 6: Declaration -->
+<div class="card">
+  <div class="card-header">
+    <div class="section-num">6</div>
+    <h2>Declaration</h2>
+  </div>
+  <div class="card-body">
+    <div class="decl">
+      I confirm that the above information is accurate and that this purchase has been reviewed at team / line-manager level before submission. All quoted prices, vendor details, and HSN codes have been verified against attached quotation documents.
+    </div>
+    <div class="decl-meta">
+      <div class="decl-box">
+        <div class="decl-label">REQUESTER NAME</div>
+        <div class="decl-value" id="declName">-</div>
+      </div>
+      <div class="decl-box">
+        <div class="decl-label">DATE OF REQUEST</div>
+        <div class="decl-value" id="declDate">-</div>
+      </div>
+    </div>
+    <label class="decl-check">
+      <input type="checkbox" id="declConfirm" onchange="updateDeclarationState()">
+      <span>I have reviewed the request details and confirm this declaration on behalf of the requester named above.</span>
+    </label>
+  </div>
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <!-- <button class="btn btn-green" id="downloadWordBtn" onclick="exportDocx()" disabled>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Download Word Document
+  </button> -->
+  <button class="btn btn-primary" id="printBtn" onclick="handlePrint()" disabled>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+    Print / Save PDF
+  </button>
+  <!-- <button class="btn btn-outline" onclick="clearForm()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.51"/></svg>
+    Clear Form
+  </button> -->
+  <span class="req-note"><span style="color:var(--red)">*</span> required fields</span>
+</div>
+
+<div class="success" id="successBanner">
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+  <span id="successText">Word document generated and downloaded successfully!</span>
+</div>
+
+<!-- docx.js from CDN -->
+<script src="https://unpkg.com/docx@8.5.0/build/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+const CATS = ["3D Printing / Fabrication","3D Printing / Resin (SLA)","3D Printing / Post-processing","3D Printing / Accessories","Multi-tool (Print/Laser/CNC)","Lab Instruments – Electronics","Lab Instruments – Oscilloscope","Lab Instruments – Power Supply","Lab Instruments – RF/Signal","Lab Instruments – Measurement","Lab Instruments – Thermal","Lab Instruments – Inspection","Lab Instruments – Accessories","IT & Computing","Machinery","Service / Maintenance","Other"];
+
+let rowId = 0;
+const rowIds = [];
+const EXCEL_HEADERS = ['#','Equipment Name','Model / Spec','HSN / SAC','Category','Qty','Unit Cost (INR)','GST Slab','Total incl. GST'];
+
+function fmt(n){ return '₹' + Math.round(n).toLocaleString('en-IN'); }
+
+function escapeAttr(value){
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/"/g, '&quot;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function autoFitCellInput(input){
+  if(!input) return;
+  const base = 12;
+  const min = 9;
+  input.style.fontSize = base + 'px';
+  // Shrink font until content fits the cell width.
+  let size = base;
+  while(input.scrollWidth > input.clientWidth && size > min){
+    size -= 1;
+    input.style.fontSize = size + 'px';
+  }
+}
+
+function autoFitRowInputs(tr){
+  if(!tr) return;
+  tr.querySelectorAll('input[type=text]').forEach(autoFitCellInput);
+}
+
+function genRef(){
+  document.getElementById('refNo').value = "";
+  syncRefDisplay();
+}
+
+function syncRefDisplay(){
+  const ref = document.getElementById('refNo').value.trim();
+  document.getElementById('refDisp').textContent = ref ? 'Ref: ' + ref : 'Ref: -';
+}
+
+function syncOrgDisplay(){
+  const dept = document.getElementById('dept').value.trim();
+  const org = dept || 'Department Name';
+  document.getElementById('orgDisp').textContent = org + ' · GITAM Deemed to be University';
+}
+
+function syncDeclarationMeta(){
+  const name = document.getElementById('fullName').value.trim();
+  const date = document.getElementById('reqDate').value;
+  document.getElementById('declName').textContent = name || '-';
+  document.getElementById('declDate').textContent = date || '-';
+}
+
+function updateDeclarationState(){
+  const ready = isFormComplete();
+  // document.getElementById('downloadWordBtn').disabled = !ready;
+  document.getElementById('printBtn').disabled = !ready;
+}
+
+function ensureDeclarationConfirmed(){
+  if(document.getElementById('declConfirm').checked) return true;
+  alert('Please confirm the declaration before printing or downloading the Word document.');
+  return false;
+}
+
+function areRequiredFieldsValid(){
+  return Array.from(document.querySelectorAll('input[required], select[required], textarea[required]'))
+    .every(el => el.checkValidity());
+}
+
+function validateRequiredFields(){
+  const fields = Array.from(document.querySelectorAll('input[required], select[required], textarea[required]'));
+  for(const field of fields){
+    if(!field.checkValidity()){
+      field.reportValidity();
+      field.focus();
+      return false;
+    }
+  }
+  return true;
+}
+
+function isFieldFilled(el){
+  if(!el) return false;
+  if(el.type === 'checkbox') return el.checked;
+  return String(el.value || '').trim().length > 0;
+}
+
+function getRequiredEquipmentErrors(){
+  if(!rowIds.length) return true;
+  for(const id of rowIds){
+    const tr = document.getElementById('r'+id);
+    if(!tr) continue;
+    const name = tr.querySelector('input[type=text]');
+    const nums = tr.querySelectorAll('input[type=number]');
+    const qty = nums[0];
+    const unit = nums[1];
+    if(!isFieldFilled(name)) return true;
+    if(parseFloat(qty?.value || '0') <= 0) return true;
+    if(parseFloat(unit?.value || '0') <= 0) return true;
+  }
+  return false;
+}
+
+function isFormComplete(){
+  if(!areRequiredFieldsValid()) return false;
+  if(!document.querySelector('input[name="priority"]:checked')) return false;
+  if(getRequiredEquipmentErrors()) return false;
+  if(!document.getElementById('declConfirm').checked) return false;
+  return true;
+}
+
+function bindValidation(){
+  const inputs = document.querySelectorAll('input, select, textarea');
+  inputs.forEach(el => {
+    const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, updateDeclarationState);
+  });
+}
+
+function addRow(data){
+  rowId++;
+  const id = rowId;
+  rowIds.push(id);
+  const customCat = data && data.cat && !CATS.includes(data.cat) ? data.cat : '';
+  const selectedCat = customCat ? 'Other' : (data && data.cat) || '';
+  const catOpts = CATS.map(c=>`<option${selectedCat===c?' selected':''}>${c}</option>`).join('');
+  const gstRate = data && data.gst != null ? Number(data.gst) : 18;
+  const gstOpts = [5, 8, 18].map(rate=>`<option value="${rate}"${gstRate===rate?' selected':''}>${rate}%</option>`).join('');
+  const tr = document.createElement('tr');
+  tr.id = 'r'+id;
+  tr.innerHTML = `
+    <td><span class="rn" id="rn${id}">${rowIds.length}</span></td>
+    <td><input type="text" placeholder="Equipment name" value="${escapeAttr(data&&data.name||'')}"></td>
+    <td><input type="text" placeholder="Model / Spec" value="${escapeAttr(data&&data.model||'')}"></td>
+    <td><input type="text" placeholder="HSN" value="${escapeAttr(data&&data.hsn||'')}" style="width:82px"></td>
+    <td>
+      <select class="category-select" onchange="toggleCategoryInput(${id})">${catOpts}</select>
+      <input class="category-custom" type="text" placeholder="Enter category" value="${escapeAttr(customCat)}" style="display:none">
+    </td>
+    <td><input type="number" min="1" value="${data&&data.qty||1}" style="width:46px" oninput="recalc(${id})"></td>
+    <td><input type="number" min="0" placeholder="0" value="${data&&data.unit||''}" style="width:100px" oninput="recalc(${id})"></td>
+    <td><select class="gst-select" style="width:76px" onchange="recalc(${id})">${gstOpts}</select></td>
+    <td><span class="auto-cell" id="tot${id}">—</span></td>
+    <td class="print-hide"><button class="del-btn" onclick="delRow(${id})" title="Remove">✕</button></td>
+  `;
+  document.getElementById('eqBody').appendChild(tr);
+  toggleCategoryInput(id);
+  autoFitRowInputs(tr);
+  tr.querySelectorAll('input[type=text]').forEach(input => {
+    input.addEventListener('input', () => autoFitCellInput(input));
+  });
+  tr.querySelectorAll('input, select').forEach(el => {
+    const evt = (el.type === 'checkbox' || el.tagName === 'SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, updateDeclarationState);
+  });
+  if(data && data.qty && data.unit) calcRow(id, data.qty, data.unit, gstRate);
+  updateTotals();
+  updateDeclarationState();
+}
+
+function toggleCategoryInput(id){
+  const tr = document.getElementById('r'+id);
+  const customInput = tr.querySelector('.category-custom');
+  const showCustom = tr.querySelector('.category-select')?.value === 'Other';
+  customInput.style.display = showCustom ? 'block' : 'none';
+}
+
+function getCategoryValue(tr){
+  const selected = tr.querySelector('.category-select')?.value || '';
+  if(selected !== 'Other') return selected;
+  return tr.querySelector('.category-custom')?.value.trim() || 'Other';
+}
+
+function normalizeHeader(value){
+  return String(value ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+}
+
+function getCell(row, names){
+  for(const name of names){
+    if(row[name] != null) return row[name];
+    const foundKey = Object.keys(row).find(key => normalizeHeader(key) === normalizeHeader(name));
+    if(foundKey) return row[foundKey];
+  }
+  return '';
+}
+
+function parseMoney(value){
+  if(typeof value === 'number') return value;
+  return parseFloat(String(value ?? '').replace(/[^0-9.-]/g, '')) || 0;
+}
+
+function parseGstSlab(value){
+  const raw = typeof value === 'number' && value <= 1 ? value * 100 : parseMoney(value);
+  const nearest = [5, 8, 18].find(rate => Math.abs(rate - raw) < 0.01);
+  return nearest || 18;
+}
+
+function resetEquipmentRows(){
+  document.getElementById('eqBody').innerHTML = '';
+  rowIds.length = 0;
+  rowId = 0;
+}
+
+function buildEquipmentRow(row){
+  return {
+    name: getCell(row, ['Equipment Name','Equipment','Name']),
+    model: getCell(row, ['Model / Spec','Model','Spec','Specification']),
+    hsn: getCell(row, ['HSN / SAC','HSN','SAC','HSN SAC']),
+    cat: getCell(row, ['Category']),
+    qty: parseMoney(getCell(row, ['Qty','Quantity'])) || 1,
+    unit: parseMoney(getCell(row, ['Unit Cost (INR)','Unit Cost','Unit Cost (₹)','Unit Price','Rate'])),
+    gst: parseGstSlab(getCell(row, ['GST Slab','GST','GST %','GST Rate']))
+  };
+}
+
+function calcRow(id, qty, unit, gstRate){
+  const base = qty * unit;
+  const gst = base * ((parseFloat(gstRate)||0) / 100);
+  const total = base + gst;
+  const span = document.getElementById('tot'+id);
+  span.textContent = fmt(total);
+  span.dataset.base = base;
+  span.dataset.gst = gst;
+}
+
+function recalc(id){
+  const tr = document.getElementById('r'+id);
+  const nums = tr.querySelectorAll('input[type=number]');
+  const qty = parseFloat(nums[0].value)||0;
+  const unit = parseFloat(nums[1].value)||0;
+  const gstRate = parseFloat(tr.querySelector('.gst-select')?.value)||0;
+  calcRow(id, qty, unit, gstRate);
+  updateTotals();
+  updateDeclarationState();
+}
+
+function delRow(id){
+  const index = rowIds.indexOf(id);
+  if(index === -1) return;
+  rowIds.splice(index, 1);
+  document.getElementById('r'+id).remove();
+  rowIds.forEach((rid,i) => { const el = document.getElementById('rn'+rid); if(el) el.textContent = i+1; });
+  updateTotals();
+  updateDeclarationState();
+}
+
+function updateTotals(){
+  let sub = 0;
+  let gst = 0;
+  rowIds.forEach(id => {
+    const totalCell = document.getElementById('tot'+id);
+    sub += parseFloat(totalCell?.dataset?.base||0);
+    gst += parseFloat(totalCell?.dataset?.gst||0);
+  });
+  const grand = sub + gst;
+  document.getElementById('itemCount').textContent = rowIds.length;
+  document.getElementById('subTotal').textContent = fmt(sub);
+  document.getElementById('gstAmt').textContent = fmt(gst);
+  document.getElementById('grandTotal').textContent = fmt(grand);
+}
+
+function collectRows(){
+  return rowIds.map((id, i) => {
+    const tr = document.getElementById('r'+id);
+    const textInputs = tr.querySelectorAll('input[type=text]');
+    const qty = tr.querySelector('input[type=number]')?.value || '1';
+    const allNum = tr.querySelectorAll('input[type=number]');
+    const unit = allNum[1]?.value || '0';
+    const gstRate = parseFloat(tr.querySelector('.gst-select')?.value)||0;
+    const base = parseFloat(qty) * parseFloat(unit);
+    const gst = base * (gstRate / 100);
+    const total = base + gst;
+    return {
+      sn: String(i+1),
+      name: textInputs[0]?.value || '',
+      model: textInputs[1]?.value || '',
+      hsn: textInputs[2]?.value || '',
+      cat: getCategoryValue(tr),
+      qty: qty,
+      unit: Math.round(base/parseFloat(qty)||0).toLocaleString('en-IN'),
+      gstRate: gstRate + '%',
+      gst: gst,
+      total: fmt(total),
+      base: base
+    };
+  });
+}
+
+function handlePrint(){
+  if(!validateRequiredFields()) return;
+  if(getRequiredEquipmentErrors()){
+    alert('Please complete the required equipment fields before printing.');
+    return;
+  }
+  if(!ensureDeclarationConfirmed()) return;
+  window.print();
+}
+
+function showSuccess(message){
+  document.getElementById('successText').textContent = message;
+  const banner = document.getElementById('successBanner');
+  banner.style.display = 'flex';
+  setTimeout(() => banner.style.display='none', 4000);
+}
+
+function downloadSampleExcel(){
+  if(typeof XLSX === 'undefined'){
+    alert('Excel library is still loading. Please try again in a moment.');
+    return;
+  }
+
+  const sampleRows = [
+    {
+      '#': 1,
+      'Equipment Name': 'Example 3D Printer',
+      'Model / Spec': 'Model X',
+      'HSN / SAC': '84775900',
+      'Category': '3D Printing / Fabrication',
+      'Qty': 1,
+      'Unit Cost (INR)': 100000,
+      'GST Slab': '18%',
+      'Total incl. GST': ''
+    }
+  ];
+  const ws = XLSX.utils.json_to_sheet(sampleRows, { header: EXCEL_HEADERS });
+  XLSX.utils.sheet_add_aoa(ws, [EXCEL_HEADERS], { origin: 'A1' });
+  ws['!cols'] = [{wch:6},{wch:28},{wch:22},{wch:14},{wch:30},{wch:8},{wch:16},{wch:12},{wch:18}];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Equipment');
+  XLSX.writeFile(wb, 'EPR_Equipment_Bulk_Upload_Template.xlsx');
+}
+
+async function importExcel(event){
+  const fileInput = event.target;
+  const file = fileInput.files?.[0];
+  if(!file) return;
+
+  try {
+    if(typeof XLSX === 'undefined') throw new Error('Excel library is still loading. Please try again in a moment.');
+
+    const data = await file.arrayBuffer();
+    const wb = XLSX.read(data, { type: 'array' });
+    const sheet = wb.Sheets[wb.SheetNames[0]];
+    const rows = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+    const equipmentRows = rows
+      .map(buildEquipmentRow)
+      .filter(row => row.name || row.model || row.hsn || row.cat || row.unit);
+
+    if(!equipmentRows.length) throw new Error('No equipment rows found in the uploaded Excel file.');
+
+    resetEquipmentRows();
+    equipmentRows.forEach(row => addRow(row));
+    updateTotals();
+    showSuccess(`${equipmentRows.length} equipment item${equipmentRows.length === 1 ? '' : 's'} imported from Excel.`);
+  } catch (err) {
+    alert(err.message || 'Could not import the Excel file. Please check the format and try again.');
+  } finally {
+    fileInput.value = '';
+  }
+}
+
+function clearForm(){
+  if(!confirm('Clear all form data and start fresh?')) return;
+  resetEquipmentRows();
+  addRow();
+  updateTotals();
+  genRef();
+  document.getElementById('declConfirm').checked = false;
+  updateDeclarationState();
+}
+
+function swapEqInputsForPrint(enable){
+  const rows = document.querySelectorAll('#eqBody tr');
+  rows.forEach(tr => {
+    tr.querySelectorAll('input, select').forEach(el => {
+      let span = el.nextElementSibling;
+      if(!span || !span.classList.contains('print-val')){
+        span = document.createElement('span');
+        span.className = 'print-val';
+        el.insertAdjacentElement('afterend', span);
+      }
+      const value = el.tagName === 'SELECT'
+        ? (el.options[el.selectedIndex]?.text || '')
+        : (el.value || '');
+      span.textContent = value;
+      el.classList.toggle('print-hide', enable);
+      span.classList.toggle('print-hide', !enable);
+    });
+  });
+}
+
+// ── DOCX EXPORT ─────────────────────────────────────────────────────────
+async function exportDocx(){
+  if(!validateRequiredFields()) return;
+  if(getRequiredEquipmentErrors()){
+    alert('Please complete the required equipment fields before downloading the Word document.');
+    return;
+  }
+  if(!ensureDeclarationConfirmed()) return;
+  const {
+    Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell,
+    AlignmentType, BorderStyle, WidthType, ShadingType, VerticalAlign, PageOrientation
+  } = docx;
+
+  const BLUE_HEX = "1a4f8a";
+  const LBLUE = "e8f0fb";
+  const GREY = "f7f8fa";
+  const WHITE = "ffffff";
+  const BC = "#d5dae4";
+  const border = { style: BorderStyle.SINGLE, size: 1, color: "d5dae4" };
+  const borders = { top: border, bottom: border, left: border, right: border };
+
+  function hCell(text, w, span=1){
+    return new TableCell({
+      borders, columnSpan: span,
+      width: { size: w, type: WidthType.DXA },
+      shading: { fill: BLUE_HEX, type: ShadingType.CLEAR },
+      margins: { top: 80, bottom: 80, left: 100, right: 100 },
+      verticalAlign: VerticalAlign.CENTER,
+      children: [new Paragraph({ alignment: AlignmentType.CENTER,
+        children: [new TextRun({ text, bold: true, color: WHITE, size: 18, font: "DM Sans" })] })]
+    });
+  }
+
+  function dCell(text, w, span=1, shade=false){
+    return new TableCell({
+      borders, columnSpan: span,
+      width: { size: w, type: WidthType.DXA },
+      shading: { fill: shade ? GREY : WHITE, type: ShadingType.CLEAR },
+      margins: { top: 70, bottom: 70, left: 100, right: 100 },
+      children: [new Paragraph({ children: [new TextRun({ text: text||'', size: 18, font: "DM Sans" })] })]
+    });
+  }
+
+  function lCell(text, w){
+    return new TableCell({
+      borders, width: { size: w, type: WidthType.DXA },
+      shading: { fill: LBLUE, type: ShadingType.CLEAR },
+      margins: { top: 70, bottom: 70, left: 100, right: 100 },
+      children: [new Paragraph({ children: [new TextRun({ text, bold: true, size: 18, font: "DM Sans", color: BLUE_HEX })] })]
+    });
+  }
+
+  function sec(num, title){
+    return new Paragraph({
+      spacing: { before: 260, after: 80 },
+      border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: "2563a8", space: 1 } },
+      children: [
+        new TextRun({ text: `${num}.  `, bold: true, size: 22, font: "DM Sans", color: BLUE_HEX }),
+        new TextRun({ text: title.toUpperCase(), bold: true, size: 22, font: "DM Sans", color: BLUE_HEX })
+      ]
+    });
+  }
+
+  function sp(before=60){ return new Paragraph({ spacing: { before, after: 0 }, children: [] }); }
+
+  const rows = collectRows();
+  let sub = 0;
+  let gst = 0;
+  rows.forEach(r => {
+    sub += r.base;
+    gst += r.gst;
+  });
+  const grand = sub + gst;
+
+  // meta fields
+  const ref = document.getElementById('refNo').value;
+  const reqDate = document.getElementById('reqDate').value;
+  const campus = document.getElementById('campus').value;
+  const acYear = document.getElementById('acYear').value;
+  const fullName = document.getElementById('fullName').value;
+  const dept = document.getElementById('dept').value;
+  const delivLoc = document.getElementById('delivLoc').value;
+  const requiredBy = document.getElementById('requiredBy').value;
+  const purpose = document.getElementById('purpose').value;
+  const usage = document.getElementById('usage').value;
+
+  // equipment rows
+  const eqTableRows = [
+    new TableRow({ tableHeader: true, children: [
+      hCell('#', 400), hCell('Equipment Name', 2600), hCell('Model / Spec', 1800),
+      hCell('HSN/SAC', 700), hCell('Category', 1400),
+      hCell('Qty', 350), hCell('Unit Cost (₹)', 900), hCell('GST', 600), hCell('Total incl. GST (₹)', 1010)
+    ]}),
+    ...rows.map((r,i) => new TableRow({ children: [
+      dCell(r.sn, 400, 1, i%2===0),
+      dCell(r.name, 2600, 1, i%2===0),
+      dCell(r.model, 1800, 1, i%2===0),
+      dCell(r.hsn, 700, 1, i%2===0),
+      dCell(r.cat, 1400, 1, i%2===0),
+      dCell(r.qty, 350, 1, i%2===0),
+      dCell(r.unit, 900, 1, i%2===0),
+      dCell(r.gstRate, 600, 1, i%2===0),
+      dCell(r.total, 1010, 1, i%2===0),
+    ]})),
+    new TableRow({ children: [
+      new TableCell({ borders, columnSpan: 7, shading: { fill: BLUE_HEX, type: ShadingType.CLEAR }, margins:{top:80,bottom:80,left:100,right:100},
+        children: [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: 'GRAND TOTAL (incl. GST)', bold:true, size:18, font:'DM Sans', color:WHITE })] })] }),
+      new TableCell({ borders, columnSpan: 2, shading: { fill: BLUE_HEX, type: ShadingType.CLEAR }, margins:{top:80,bottom:80,left:100,right:100},
+        children: [new Paragraph({ children: [new TextRun({ text: fmt(grand), bold:true, size:18, font:'DM Sans', color:WHITE })] })] }),
+    ]})
+  ];
+
+  const doc = new Document({
+    sections: [{
+      properties: {
+        page: {
+          size: { width: 15840, height: 12240, orientation: PageOrientation.LANDSCAPE },
+          margin: { top: 720, right: 720, bottom: 720, left: 720 }
+        }
+      },
+      children: [
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing:{before:0,after:40},
+          children:[new TextRun({text:'VENTURE DEVELOPMENT CENTRE — GITAM DEEMED TO BE UNIVERSITY', bold:true, size:26, font:'DM Sans', color:BLUE_HEX})] }),
+        new Paragraph({ alignment: AlignmentType.CENTER, spacing:{before:0,after:200},
+          border:{ bottom:{style:BorderStyle.SINGLE,size:8,color:'2563a8',space:1} },
+          children:[new TextRun({text:'EQUIPMENT PURCHASE REQUEST', bold:true, size:30, font:'DM Sans', color:BLUE_HEX})] }),
+
+        sec('1','Request Details'),
+        new Table({ width:{size:15120,type:WidthType.DXA}, columnWidths:[2520,2520,2520,2520,2520,2520],
+          rows:[ new TableRow({ children:[
+            lCell('Reference No.',2520), dCell(ref,2520),
+            lCell('Date of Request',2520), dCell(reqDate,2520),
+            lCell('Campus',2520), dCell(campus,2520),
+          ]})] }),
+
+        sec('2','Requester Information'), sp(80),
+        new Table({ width:{size:15120,type:WidthType.DXA}, columnWidths:[2520,2520,2520,2520,2520,2520],
+          rows:[
+            new TableRow({ children:[ lCell('Full Name',2520), dCell(fullName,2520), lCell('Department',2520), dCell(dept,2520), lCell('Delivery Location',5040,2), dCell(delivLoc,5040,2) ] }),
+          ]}),
+
+        sec('3',`Equipment Details (${rows.length} items · Grand Total: ${fmt(grand)})`), sp(80),
+        new Table({ width:{size:15760,type:WidthType.DXA}, columnWidths:[400,2600,1800,700,1400,350,900,600,1010], rows: eqTableRows }),
+
+        sec('4','Purpose & Usage'), sp(80),
+        new Table({ width:{size:15120,type:WidthType.DXA}, columnWidths:[7560,7560],
+          rows:[
+            new TableRow({ children:[ lCell('Purpose of Purchase',7560), lCell('Intended Usage',7560) ] }),
+            new TableRow({ children:[ dCell(purpose,7560), dCell(usage,7560) ] }),
+          ]}),
+
+        sec('5','Declaration & Approval Chain'), sp(80),
+        new Paragraph({ spacing:{before:0,after:100}, children:[new TextRun({text:`I confirm that the above information is accurate and that this purchase has been reviewed at team / line-manager level before submission. Declared by ${fullName || 'the requester'} on ${reqDate || 'the request date'}.`, size:18, font:'DM Sans', color:'4a5568', italics:true})] }),
+        new Table({ width:{size:15120,type:WidthType.DXA}, columnWidths:[3780,3780,3780,3780],
+          rows:[
+            new TableRow({ children:[ hCell('Approved By',3780), hCell('Designation',3780), hCell('Date',3780), hCell('Signature',3780) ] }),
+            new TableRow({ children:[ dCell('',3780), dCell('',3780), dCell('',3780), dCell('',3780) ] }),
+            new TableRow({ children:[ dCell('',3780), dCell('',3780), dCell('',3780), dCell('',3780) ] }),
+            new TableRow({ children:[ dCell('',3780), dCell('',3780), dCell('',3780), dCell('',3780) ] }),
+          ]}),
+      ]
+    }]
+  });
+
+  const buf = await Packer.toBuffer(doc);
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `EPR_GITAM_VDC_${document.getElementById('refNo').value}.docx`;
+  a.click();
+  URL.revokeObjectURL(url);
+
+  showSuccess('Word document generated and downloaded successfully!');
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────
+document.getElementById('refNo').addEventListener('input', syncRefDisplay);
+document.getElementById('dept').addEventListener('input', syncOrgDisplay);
+document.getElementById('fullName').addEventListener('input', syncDeclarationMeta);
+document.getElementById('reqDate').addEventListener('input', syncDeclarationMeta);
+document.getElementById('declConfirm').addEventListener('change', updateDeclarationState);
+bindValidation();
+window.addEventListener('resize', () => {
+  document.querySelectorAll('#eqBody tr').forEach(autoFitRowInputs);
+});
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('#eqBody tr').forEach(autoFitRowInputs);
+  swapEqInputsForPrint(true);
+});
+window.addEventListener('afterprint', () => {
+  swapEqInputsForPrint(false);
+});
+genRef();
+document.getElementById('reqDate').value = new Date().toISOString().slice(0,10);
+document.getElementById('campus').value = 'Visakhapatnam';
+// document.getElementById('fullName').value = 'Bollem Raja Kumar';
+// document.getElementById('dept').value = 'Venture Development Centre';
+syncOrgDisplay();
+syncDeclarationMeta();
+updateDeclarationState();
+addRow();
+
+</script>
+</body>
+</html>
