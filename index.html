@@ -571,13 +571,13 @@ table.eq {
     <div class="row" style="margin-bottom:12px">
       <div class="field">
         <label>Purpose of Purchase <span class="req">*</span></label>
-        <textarea id="purpose" placeholder="Why is this equipment needed? e.g. new Makerspace setup, replacement, capacity expansion aligned with campus roadmap…"></textarea>
+        <textarea id="purpose" placeholder="Why is this equipment needed? e.g. new Makerspace setup, replacement, capacity expansion aligned with campus roadmap…" required></textarea>
       </div>
     </div>
     <div class="row" style="margin-bottom:12px">
       <div class="field">
         <label>Intended Usage <span class="req">*</span></label>
-        <textarea id="usage" placeholder="How and where will this be used? Who will use it? Which tasks or processes will it support?"></textarea>
+        <textarea id="usage" placeholder="How and where will this be used? Who will use it? Which tasks or processes will it support?" required></textarea>
       </div>
     </div>
     <div class="row row-2">
@@ -815,7 +815,6 @@ function getRequiredEquipmentErrors(){
 
 function isFormComplete(){
   if(!areRequiredFieldsValid()) return false;
-  if(!document.querySelector('input[name="priority"]:checked')) return false;
   if(getRequiredEquipmentErrors()) return false;
   if(!document.getElementById('declConfirm').checked) return false;
   return true;
